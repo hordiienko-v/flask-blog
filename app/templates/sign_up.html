@@ -4,4 +4,15 @@
 
 {% block main %}
 <h1>Sign-up</h1>
+<br>
+<form class="sign-up" action="/sign-up" method="post">
+  <p>username</p>
+  <input type="text" id="username" name="username">
+  <p>password</p>
+  <input type="password" id="password" name="password"><br>
+  <button type="submit" id="button">Submit</button>
+  {% if error %}
+  <p style="color: red">{{error}}</p>
+  {% endif %}
+</form>
 {% endblock %}
