@@ -8,7 +8,7 @@ class Post(db.Model):
     body = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
-    author = db.relationship('User')
+    # author = db.relationship('User')
 
     def __init__(self, body, author_id):
         self.body = body
@@ -21,3 +21,11 @@ class Post(db.Model):
     @classmethod
     def find_by_title(cls, title):
         return list(cls.query.filter_by(title=title))
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()

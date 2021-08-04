@@ -1,5 +1,6 @@
 from app import app
 from flask import render_template, request, redirect
+from app.models.user import User
 
 @app.route("/")
 def home():
@@ -9,10 +10,14 @@ def home():
 def sign_up():
     data = request.form
     if request.method == "POST":
-        if data['username'] == 'admin' and data['password'] == 'admin':
-            return redirect("/")
+        if User.find_by_username(data['username']):
+            return render_template("sign_up.html", error="Username is already taken")
+        elif any(v.isspace() or not v for v in request.form.values()):
+            return render_template("sign_up.html", error="Empty field is not allowed")
         else:
-            return render_template("sign_up.html", error="Incorrect login or password")
+            user = User(**data)
+            user.save_to_db()
+            return render_template("sign_up.html", success="User has been created")
     return render_template("sign_up.html")
 
 @app.route("/about")
