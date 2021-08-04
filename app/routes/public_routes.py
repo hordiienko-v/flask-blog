@@ -20,6 +20,21 @@ def sign_up():
             return render_template("sign_up.html", success="User has been created")
     return render_template("sign_up.html")
 
+@app.route("/sign-in", methods=["GET", "POST"])
+def sign_in():
+    data = request.form
+    if request.method == "POST":
+        user = User.find_by_username(data["username"])
+        if user and user.password == data["password"]:
+            return redirect("/")
+        elif user:
+            return render_template("sign_in.html", error="Incorrect password")
+        elif any(v.isspace() or not v for v in request.form.values()):
+            return render_template("sign_in.html", error="Empty field is not allowed")
+        else:
+            return render_template("sign_in.html", error="User does not exist")
+    return render_template("sign_in.html")
+
 @app.route("/about")
 def about():
     return render_template("about.html")
