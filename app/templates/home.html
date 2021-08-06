@@ -3,8 +3,8 @@
 {% block title %}Home page{% endblock %}
 
 {% block main %}
-<h1>Home page</h1>
+<h1 class="title">Home page</h1>
 {% if current_user.is_authenticated %}
-<p>Hi, {{current_user.username}}</p>
+<h1 class="subtitle">Hi, {{current_user.username}}</h1>
 {% endif %}
 {% endblock %}

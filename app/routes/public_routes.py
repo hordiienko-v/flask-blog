@@ -11,10 +11,10 @@ def home():
 def sign_up():
     data = request.form
     if request.method == "POST":
-        if User.find_by_username(data['username']):
-            return render_template("sign_up.html", error="Username is already taken")
-        elif any(v.isspace() or not v for v in request.form.values()):
+        if any(v.isspace() or not v for v in request.form.values()):
             return render_template("sign_up.html", error="Empty field is not allowed")
+        elif User.find_by_username_or_email(data['username'], data['email']):
+            return render_template("sign_up.html", error="Username or email is already taken")
         else:
             user = User(**data)
             user.save_to_db()
@@ -30,13 +30,13 @@ def sign_in():
         remember = False
     if request.method == "POST":
         user = User.find_by_username(data["username"])
-        if user and user.password == data["password"]:
+        if any(v.isspace() or not v for v in request.form.values()):
+            return render_template("sign_in.html", error="Empty field is not allowed")
+        elif user and user.password == data["password"]:
             login_user(user, remember=remember)
             return redirect("/")
         elif user:
             return render_template("sign_in.html", error="Incorrect password")
-        elif any(v.isspace() or not v for v in request.form.values()):
-            return render_template("sign_in.html", error="Empty field is not allowed")
         else:
             return render_template("sign_in.html", error="User does not exist")
     return render_template("sign_in.html")

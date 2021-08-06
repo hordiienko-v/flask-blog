@@ -1,21 +1,33 @@
-{% extends "basic_templates/index.html" %}
+{% extends "basic_templates/auth.html" %}
 
 {% block title %}Sign-up{% endblock %}
 
 {% block main %}
-<h1>Sign-up</h1>
-<br>
-<form class="sign-up" action="/sign-up" method="post">
-  <p>username</p>
-  <input type="text" id="username" name="username">
-  <p>password</p>
-  <input type="password" id="password" name="password"><br>
-  <button type="submit" id="button">Submit</button>
-  {% if error %}
-  <p style="color: red">{{error}}</p>
-  {% endif %}
-  {% if success %}
-  <p style="color: green">{{success}}</p>
-  {% endif %}
-</form>
+<div class="hero-body">
+  <div class="card column is-4 is-offset-4" style="padding : 30px">
+    <h1 class="title has-text-centered">Sign-up</h1>
+    <form class="sign-up" action="/sign-up" method="post">
+      <div class="field">
+        <input class="input" type="text" id="username" name="username" placeholder="username">
+      </div>
+      <div class="field">
+        <input class="input" type="email" id="email" name="email" placeholder="email">
+      </div>
+      <div class="field">
+        <input class="input" type="password" id="password" name="password" placeholder="password">
+      </div>
+      {% if error %}
+      <div class="tags is-centered is-marginless">
+        <span class="tag is-danger is-light">{{error}}</span>
+      </div>
+      {% endif %}
+      {% if success %}
+      <div class="tags is-centered is-marginless">
+        <span class="tag is-success is-light">{{success}}</span>
+      </div>
+      {% endif %}
+      <button class="button is-primary is-fullwidth" type="submit" id="button">Submit</button>
+    </form>
+  </div>
+</div>
 {% endblock %}

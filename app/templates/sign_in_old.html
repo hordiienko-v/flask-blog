@@ -1,0 +1,32 @@
+{% extends "basic_templates/index.html" %}
+
+{% block title %}Sign-in{% endblock %}
+
+{% block main %}
+<div class="columns">
+  <div class="card column is-6 is-offset-3">
+    <h1 class="title">Sign-in</h1>
+    <form class="sign-in" style="padding : 50px" action="/sign-in" method="post">
+      <div class="field">
+        <input class="input" type="text" id="username" name="username" placeholder="username">
+      </div>
+      <div class="field">
+        <input class="input" type="password" id="password" name="password" placeholder="password"><br>
+      </div>
+      <div class="field">
+        <input class="checkbox" type="checkbox" id="remember" name="remember">
+        <label for="remember">Remember</label>
+      </div>
+      <button class="button is-primary" type="submit" id="button">Submit</button>
+      {% if error %}
+      <p style="color: red">{{error}}</p>
+      {% endif %}
+      {% if success %}
+      <p style="color: green">{{success}}</p>
+      {% endif %}
+    </form>
+  </div>
+  <div class="column"></div>
+
+</div>
+{% endblock %}
