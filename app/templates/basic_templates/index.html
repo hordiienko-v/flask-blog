@@ -8,8 +8,13 @@
     <nav>
       <a href="/">Blog</a>
       <a href="/about">About</a>
+      {% if not current_user.is_authenticated %}
       <a href="/sign-up">Sign-up</a>
       <a href="/sign-in">Sign-in</a>
+      {% endif %}
+      {% if current_user.is_authenticated %}
+      <a href="/logout">Logout</a>
+      {% endif %}
     </nav>
 
     {% block main %}{% endblock %}

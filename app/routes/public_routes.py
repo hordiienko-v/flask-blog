@@ -1,6 +1,7 @@
 from app import app
 from flask import render_template, request, redirect
 from app.models.user import User
+from flask_login import login_user, logout_user, login_required, current_user
 
 @app.route("/")
 def home():
@@ -23,9 +24,14 @@ def sign_up():
 @app.route("/sign-in", methods=["GET", "POST"])
 def sign_in():
     data = request.form
+    if data.get("remember"):
+        remember = True
+    else:
+        remember = False
     if request.method == "POST":
         user = User.find_by_username(data["username"])
         if user and user.password == data["password"]:
+            login_user(user, remember=remember)
             return redirect("/")
         elif user:
             return render_template("sign_in.html", error="Incorrect password")
@@ -34,6 +40,12 @@ def sign_in():
         else:
             return render_template("sign_in.html", error="User does not exist")
     return render_template("sign_in.html")
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect("/sign-in")
 
 @app.route("/about")
 def about():

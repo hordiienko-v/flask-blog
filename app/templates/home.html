@@ -4,4 +4,7 @@
 
 {% block main %}
 <h1>Home page</h1>
+{% if current_user.is_authenticated %}
+<p>Hi, {{current_user.username}}</p>
+{% endif %}
 {% endblock %}
