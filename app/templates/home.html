@@ -5,9 +5,6 @@
 
 {% block main %}
   <div class="section">
-    <h1 class="title is-2 is-spaced">Home page</h1>
-  </div>
-  <div class="section">
     <h1 class="title is-3">Last posts</h1>
     {% for post in posts %}
       {{ m.create_post_preview(title=post.title, username=post.author.username,

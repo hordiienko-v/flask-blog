@@ -1,0 +1,20 @@
+{% extends "basic_templates/index.html" %}
+
+{% block main %}
+  <div class="card" style="padding: 30px">
+    <div class="block level">
+      <div>
+        <h1 class="title">{{post.title}}</h1>
+        <div class="subtitle">
+          by <a class="is-link" href="#">{{post.author.username}}</a>
+        </div>
+      </div>
+      <div class="level-right subtitle block">
+        {{post.timestamp | format_date}}
+      </div>
+    </div>
+    <div class="block">
+      {{post.body}}
+    </div>
+  </div>
+{% endblock %}

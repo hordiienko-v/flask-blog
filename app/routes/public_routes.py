@@ -78,3 +78,10 @@ def posts(user_id):
         posts = user.posts.all()
         return render_template("posts.html", username=user.username, posts=posts)
     return render_template("basic_templates/errors/404.html"), 404
+
+@app.route("/post/<int:post_id>")
+def post(post_id):
+    post = Post.find_by_id(post_id)
+    if post:
+        return render_template("post.html", post=post)
+    return render_template("basic_templates/errors/404.html"), 404
