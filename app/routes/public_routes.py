@@ -50,3 +50,9 @@ def logout():
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+@app.route("/create_post", methods=["GET", "POST"])
+def create_post():
+    if request.method == "POST":
+        return ""
+    return render_template("create_post.html")

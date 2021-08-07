@@ -1,0 +1,21 @@
+{% extends "basic_templates/no-scroll.html" %}
+
+{% block title %}Create post{% endblock %}
+
+{% block main%}
+<div class="hero-body hero is-paddingless">
+  <div class="column card hero-head" style="padding : 30px">
+    <form action="/create_post" method="post">
+      <div class="field">
+        <input class="input" type="text" name="title" placeholder="Title">
+      </div>
+      <div class="field">
+        <textarea class="textarea" name="body" rows="8" cols="80" placeholder="Text"></textarea>
+      </div>
+      <div class="field">
+        <button class="button is-primary" type="submit" name="submit">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

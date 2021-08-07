@@ -1,4 +1,4 @@
-{% extends "basic_templates/auth.html" %}
+{% extends "basic_templates/no-scroll.html" %}
 
 {% block main %}
 <div class="hero-body">
@@ -6,10 +6,10 @@
     <h1 class="title has-text-centered">Sign-in</h1>
     <form class="sign-in" action="/sign-in" method="post">
       <div class="field">
-        <input class="input" type="text" id="username" name="username" placeholder="username">
+        <input class="input" type="text" id="username" name="username" placeholder="Username">
       </div>
       <div class="field">
-        <input class="input" type="password" id="password" name="password" placeholder="password">
+        <input class="input" type="password" id="password" name="password" placeholder="Password">
       </div>
       {% if error %}
       <div class="tags is-centered is-marginless">
@@ -19,7 +19,7 @@
       <div class="field level is-mobile">
         <div class="level-left">
           <label class="checkbox">
-            <input class="checkbox" type="checkbox" id="remember" name="remember">
+            <input class="checkbox" type="checkbox" id="remember" name="Remember">
             Remember
           </label>
         </div>

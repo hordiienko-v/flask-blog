@@ -6,6 +6,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80))
     body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime)
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
     # author = db.relationship('User')

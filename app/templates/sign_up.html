@@ -1,4 +1,4 @@
-{% extends "basic_templates/auth.html" %}
+{% extends "basic_templates/no-scroll.html" %}
 
 {% block title %}Sign-up{% endblock %}
 
@@ -8,13 +8,13 @@
     <h1 class="title has-text-centered">Sign-up</h1>
     <form class="sign-up" action="/sign-up" method="post">
       <div class="field">
-        <input class="input" type="text" id="username" name="username" placeholder="username">
+        <input class="input" type="text" id="username" name="username" placeholder="Username">
       </div>
       <div class="field">
-        <input class="input" type="email" id="email" name="email" placeholder="email">
+        <input class="input" type="email" id="email" name="email" placeholder="Email">
       </div>
       <div class="field">
-        <input class="input" type="password" id="password" name="password" placeholder="password">
+        <input class="input" type="password" id="password" name="password" placeholder="Password">
       </div>
       {% if error %}
       <div class="tags is-centered is-marginless">
