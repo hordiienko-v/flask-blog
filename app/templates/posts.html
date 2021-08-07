@@ -10,7 +10,7 @@
   {% if posts | length > 0 %}
     <div class="section">
       {% for post in posts %}
-        {{ m.create_post_preview(post.title, username, post.timestamp )}}
+        {{ m.create_post_preview(post.title, username, post.id, post.timestamp )}}
       {% endfor %}
     </div>
   {% else %}

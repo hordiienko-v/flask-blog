@@ -1,5 +1,6 @@
-{% macro create_post_preview(title="", username="", timestamp="") -%}
-  <div class="card block level" style="padding: 30px">
+{% macro create_post_preview(title="", username="", post_id="", timestamp="") -%}
+  <a class="card block level" style="padding: 30px" href="/post/{{post_id}}"
+    onmouseover="this.style.opacity='0.7';" onmouseout="this.style.opacity='1';">
     <div class="container">
       <h1 class="title is-3 level-left">{{title}}</h1>
       <h1 class="subtitle level-left">by {{username}}</h1>
@@ -7,5 +8,5 @@
     <div class="container level-right">
       <h1 class="subtitle level-right">{{timestamp | format_date}}</h1>
     </div>
-  </div>
+  </a>
 {%- endmacro %}

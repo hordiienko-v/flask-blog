@@ -70,7 +70,7 @@ def create_post():
         return render_template("create_post.html", success="Post created")
     return render_template("create_post.html")
 
-@app.route("/posts/<int:user_id>")
+@app.route("/<int:user_id>/posts")
 def posts(user_id):
     user = User.find_by_id(user_id)
     if user:
