@@ -1,7 +1,9 @@
 from app import app
 from flask import render_template, request, redirect
 from app.models.user import User
+from app.models.post import Post
 from flask_login import login_user, logout_user, login_required, current_user
+from datetime import datetime
 
 @app.route("/")
 def home():
@@ -54,5 +56,10 @@ def about():
 @app.route("/create_post", methods=["GET", "POST"])
 def create_post():
     if request.method == "POST":
-        return ""
+        data = request.form
+
+        post = Post(**data, timestamp=datetime.now(), author_id=current_user.get_id())
+        post.save_to_db()
+
+        return render_template("create_post.html", success="Post created")
     return render_template("create_post.html")

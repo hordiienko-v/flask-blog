@@ -11,8 +11,10 @@ class Post(db.Model):
 
     # author = db.relationship('User')
 
-    def __init__(self, body, author_id):
+    def __init__(self, title, body, timestamp, author_id):
+        self.title = title
         self.body = body
+        self.timestamp = timestamp
         self.author_id = author_id
 
     @classmethod

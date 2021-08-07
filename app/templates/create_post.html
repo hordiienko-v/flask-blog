@@ -12,8 +12,13 @@
       <div class="field">
         <textarea class="textarea" name="body" rows="8" cols="80" placeholder="Text"></textarea>
       </div>
+      {% if success %}
+      <div class="tags is-centered is-marginless">
+        <span class="tag is-success is-light">{{success}}</span>
+      </div>
+      {% endif %}
       <div class="field">
-        <button class="button is-primary" type="submit" name="submit">Submit</button>
+        <button class="button is-primary" type="submit" id="submit">Submit</button>
       </div>
     </form>
   </div>
