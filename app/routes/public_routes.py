@@ -3,6 +3,7 @@ from flask import render_template, request, redirect
 from app.models.user import User
 from app.models.post import Post
 from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
 @app.errorhandler(404)
@@ -22,7 +23,8 @@ def sign_up():
         elif User.find_by_username_or_email(data['username'], data['email']):
             return render_template("sign_up.html", error="Username or email is already taken")
         else:
-            user = User(**data)
+            user = User(username=data["username"], email=data["email"],
+                password=generate_password_hash(data["password"], method="sha256"))
             user.save_to_db()
             return render_template("sign_up.html", success="User has been created")
     return render_template("sign_up.html")
@@ -38,7 +40,7 @@ def sign_in():
         user = User.find_by_username(data["username"])
         if any(v.isspace() or not v for v in request.form.values()):
             return render_template("sign_in.html", error="Empty field is not allowed")
-        elif user and user.password == data["password"]:
+        elif user and check_password_hash(user.password, data["password"]):
             login_user(user, remember=remember)
             return redirect("/")
         elif user:
