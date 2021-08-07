@@ -1,0 +1,21 @@
+{% extends "basic_templates/index.html" %}
+{% import "macros/macros.html" as m %}
+
+{% block title %}{{username}}'s posts{% endblock %}
+
+{% block main %}
+  <div class="section">
+    <h1 class="title is-2">{{username}}'s posts</h1>
+  </div>
+  {% if posts | length > 0 %}
+    <div class="section">
+      {% for post in posts %}
+        {{ m.create_post_preview(post.title, username, post.timestamp )}}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="section">
+      <h1 class="title is-3">No posts yet :(</h1>
+    </div>
+  {% endif %}
+{% endblock %}

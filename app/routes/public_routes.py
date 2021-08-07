@@ -5,6 +5,10 @@ from app.models.post import Post
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("basic_templates/errors/404.html"), 404
+
 @app.route("/")
 def home():
     return render_template("home.html")
@@ -63,3 +67,11 @@ def create_post():
 
         return render_template("create_post.html", success="Post created")
     return render_template("create_post.html")
+
+@app.route("/posts/<int:user_id>")
+def posts(user_id):
+    user = User.find_by_id(user_id)
+    if user:
+        posts = user.posts.all()
+        return render_template("posts.html", username=user.username, posts=posts)
+    return render_template("basic_templates/errors/404.html"), 404

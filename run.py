@@ -1,6 +1,7 @@
 from app import app
 from flask_login import LoginManager
 from app.models.user import User
+# import app.filters
 
 
 if __name__ == "__main__":
@@ -10,6 +11,10 @@ if __name__ == "__main__":
     login_manager = LoginManager()
     login_manager.login_view = "/sign-in"
     login_manager.init_app(app)
+
+    @app.template_filter("format_date")
+    def format_date(value, format="%H:%M %d.%m.%y"):
+        return value.strftime(format)
 
     @login_manager.user_loader
     def load_user(user_id):

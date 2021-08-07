@@ -30,7 +30,7 @@ class User(db.Model, UserMixin):
         return cls.query.filter(or_(cls.username==username, cls.email==email)).first()
 
     @classmethod
-    def find_by_id(self, _id):
+    def find_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
 
     def save_to_db(self):
