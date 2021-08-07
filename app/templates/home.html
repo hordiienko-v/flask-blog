@@ -1,12 +1,17 @@
 {% extends "basic_templates/index.html" %}
+{% import "macros/macros.html" as m %}
 
 {% block title %}Home page{% endblock %}
 
 {% block main %}
-<div class="section">
-  <h1 class="title is-2 is-spaced">Home page</h1>
-  {% if current_user.is_authenticated %}
-  <h1 class="subtitle">Hi, {{current_user.username}}</h1>
-</div>
-{% endif %}
+  <div class="section">
+    <h1 class="title is-2 is-spaced">Home page</h1>
+  </div>
+  <div class="section">
+    <h1 class="title is-3">Last posts</h1>
+    {% for post in posts %}
+      {{ m.create_post_preview(title=post.title, username=post.author.username,
+        post_id=post.id, timestamp=post.timestamp)}}
+    {% endfor %}
+  </div>
 {% endblock %}

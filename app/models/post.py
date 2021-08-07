@@ -1,4 +1,5 @@
 from app.db import db
+from sqlalchemy import desc
 
 class Post(db.Model):
     __tablename__ = "posts"
@@ -16,6 +17,10 @@ class Post(db.Model):
         self.body = body
         self.timestamp = timestamp
         self.author_id = author_id
+
+    @classmethod
+    def get_last_twenty(cls):
+        return list(cls.query.order_by(desc(Post.timestamp)).limit(20).all())
 
     @classmethod
     def find_by_id(cls, _id):

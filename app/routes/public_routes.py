@@ -12,7 +12,8 @@ def page_not_found(e):
 
 @app.route("/")
 def home():
-    return render_template("home.html")
+    posts = Post.get_last_twenty()
+    return render_template("home.html", posts=posts)
 
 @app.route("/sign-up", methods=["GET", "POST"])
 def sign_up():
