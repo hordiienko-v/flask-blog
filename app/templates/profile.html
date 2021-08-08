@@ -1,0 +1,72 @@
+{% extends "basic_templates/index.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block main %}
+  <div class="section">
+    <h1 class="title has-text-centered is-2">Profile</h1>
+  </div>
+  <div class="columns block">
+    <div class="column is-2">
+      <img class="image" src="{{url_for('static', filename='icons/user.svg')}}" alt=""><br>
+      <h1 class="title has-text-centered is-spaced">{{user.username}}</h1>
+      <p class="field subtitle is-5 has-text-centered"
+      id="bio-text">{{user.bio}}</p>
+      <textarea class="field textarea is-hidden" name="bio" rows="4"
+      maxlength="100" id="bio-textarea">{{user.bio}}</textarea>
+      <div class="block has-text-centered">
+        <button class="button is-primary text-not-changing" type="button" id="bio-button">Change bio</button>
+      </div>
+    </div>
+    <div class="column is-9">
+
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+<script>
+  function changeBio(bio) {
+    fetch(window.origin+"/change_bio", {
+      method: "POST",
+      body: JSON.stringify({bio: bio}),
+      headers: {
+      "Content-Type": "application/json"
+      }
+    })
+    .then(function(response) {
+      if (response.status !== 200) {
+        console.log("Hmm. Status code: ${response.status}");
+        return;
+      }
+      response.json().then(function(data) {
+        console.log(data);
+      });
+    })
+    .catch(function(error) {
+      console.log("Fetch error: ${error}");
+    });
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    // Get all "navbar-burger" elements
+    const bioButton = document.getElementById('bio-button');
+    const bioTextarea = document.getElementById('bio-textarea');
+    const bioText = document.getElementById('bio-text');
+    if (bioButton && bioTextarea) {
+      bioButton.addEventListener('click', () => {
+        if (bioButton.classList.contains('text-not-changing')) {
+          bioButton.textContent = 'Save';
+        } else {
+          bioText.textContent = bioTextarea.value;
+          changeBio(bioText.textContent);
+          bioButton.textContent = 'Change bio';
+        }
+        bioTextarea.classList.toggle('is-hidden');
+        bioText.classList.toggle('is-hidden');
+        bioButton.classList.toggle('text-not-changing');
+        bioButton.classList.toggle('text-changing');
+      })
+    };
+  });
+</script>
+{% endblock %}

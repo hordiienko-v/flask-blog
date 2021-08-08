@@ -25,7 +25,8 @@ def sign_up():
             return render_template("sign_up.html", error="Username or email is already taken")
         else:
             user = User(username=data["username"], email=data["email"],
-                password=generate_password_hash(data["password"], method="sha256"))
+                password=generate_password_hash(data["password"], method="sha256"),
+                bio='')
             user.save_to_db()
             return render_template("sign_up.html", success="User has been created")
     return render_template("sign_up.html")
@@ -49,12 +50,6 @@ def sign_in():
         else:
             return render_template("sign_in.html", error="User does not exist")
     return render_template("sign_in.html")
-
-@app.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect("/sign-in")
 
 @app.route("/about")
 def about():
