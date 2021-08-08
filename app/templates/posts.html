@@ -5,12 +5,12 @@
 
 {% block main %}
   <div class="section">
-    <h1 class="title is-2">{{username}}'s posts</h1>
+    <h1 class="title is-1 has-text-centered">{{username}}'s posts</h1>
   </div>
   {% if posts | length > 0 %}
     <div class="section">
       {% for post in posts %}
-        {{ m.create_post_preview(title=post.title, username=username, 
+        {{ m.create_post_preview(title=post.title, username=username,
           post_id=post.id, timestamp=post.timestamp)}}
       {% endfor %}
     </div>

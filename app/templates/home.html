@@ -5,7 +5,9 @@
 
 {% block main %}
   <div class="section">
-    <h1 class="title is-3">Last posts</h1>
+    <h1 class="title has-text-centered is-1">Last posts</h1>
+  </div>
+  <div class="section">
     {% for post in posts %}
       {{ m.create_post_preview(title=post.title, username=post.author.username,
         post_id=post.id, timestamp=post.timestamp)}}
