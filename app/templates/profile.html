@@ -18,11 +18,23 @@
         <button class="button is-primary text-not-changing" type="button" id="bio-button">Change bio</button>
       </div>
     </div>
-    <div class="column is-9">
-
+    <div class="column is-6 is-offset-1">
+      <div class="card" style="padding: 30px">
+        <div class="field">
+          <h1 class="label">email</h1>
+          <div class="level">
+            <input class="input" type="email" id="email-input" value="{{current_user.email}}">
+            <button class="button is-primary" type="button" id="email-button" disabled>Change</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}
+
+
+
+
 
 {% block script %}
 <script>
@@ -34,14 +46,17 @@
       "Content-Type": "application/json"
       }
     })
-    .then(function(response) {
-      if (response.status !== 200) {
-        console.log("Hmm. Status code: ${response.status}");
-        return;
+    .catch(function(error) {
+      console.log("Fetch error: ${error}");
+    });
+  }
+  function changeEmail(email) {
+    fetch(window.origin+"/change_email", {
+      method: "POST",
+      body: JSON.stringify({email: email}),
+      headers: {
+      "Content-Type": "application/json"
       }
-      response.json().then(function(data) {
-        console.log(data);
-      });
     })
     .catch(function(error) {
       console.log("Fetch error: ${error}");
@@ -52,6 +67,8 @@
     const bioButton = document.getElementById('bio-button');
     const bioTextarea = document.getElementById('bio-textarea');
     const bioText = document.getElementById('bio-text');
+    const emailButton = document.getElementById('email-button');
+    const emailInput = document.getElementById('email-input');
     if (bioButton && bioTextarea) {
       bioButton.addEventListener('click', () => {
         if (bioButton.classList.contains('text-not-changing')) {
@@ -67,6 +84,15 @@
         bioButton.classList.toggle('text-changing');
       })
     };
+    if (emailButton && emailInput) {
+      emailInput.addEventListener('input', () => {
+        emailButton.disabled = false
+      });
+      emailButton.addEventListener('click', () => {
+        changeEmail(emailInput.value);
+        emailButton.disabled = true;
+      })
+    }
   });
 </script>
 {% endblock %}
