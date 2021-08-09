@@ -27,6 +27,17 @@
             <button class="button is-primary" type="button" id="email-button" disabled>Change</button>
           </div>
         </div>
+        <div class="field">
+          <h1 class="label">password</h1>
+          <div class="level field">
+            <input class="input" type="password" id="password-old-input" placeholder="enter current password">
+            <input class="input" type="password" id="password-new-input" placeholder="enter new password">
+            <button class="button is-primary" type="button" id="password-button" disabled>Change</button>
+          </div>
+          <div class="tags is-centered is-marginless is-hidden" id="password-tag-div">
+            <span class="tag is-light" id='password-tag'></span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -38,6 +49,32 @@
 
 {% block script %}
 <script>
+  function changePassword(old_p, new_p) {
+    var res = fetch(window.origin+"/change_password", {
+      method: "POST",
+      body: JSON.stringify({old: old_p, new: new_p}),
+      headers: {
+      "Content-Type": "application/json"
+      }
+    })
+    .then(responce => {
+      responce.json().then(data => {
+        const tag = document.getElementById("password-tag");
+        const div = document.getElementById("password-tag-div");
+        if (data.message === "OK") {
+          tag.classList.add('is-success');
+          tag.textContent = 'Password changed';
+        } else {
+          tag.classList.add('is-danger');
+          tag.textContent = data.message;
+        }
+        div.classList.remove('is-hidden');
+      })
+    })
+    .catch(function(error) {
+      console.log("Fetch error: ${error}");
+    });
+  }
   function changeBio(bio) {
     fetch(window.origin+"/change_bio", {
       method: "POST",
@@ -63,19 +100,22 @@
     });
   }
   document.addEventListener('DOMContentLoaded', () => {
-    // Get all "navbar-burger" elements
     const bioButton = document.getElementById('bio-button');
     const bioTextarea = document.getElementById('bio-textarea');
     const bioText = document.getElementById('bio-text');
     const emailButton = document.getElementById('email-button');
     const emailInput = document.getElementById('email-input');
+    var emailActual = emailInput.value.trim();
+    const passwordOldInput = document.getElementById('password-old-input');
+    const passwordNewInput = document.getElementById('password-new-input');
+    const passwordButton = document.getElementById('password-button');
     if (bioButton && bioTextarea) {
       bioButton.addEventListener('click', () => {
         if (bioButton.classList.contains('text-not-changing')) {
           bioButton.textContent = 'Save';
         } else {
-          bioText.textContent = bioTextarea.value;
-          changeBio(bioText.textContent);
+          bioText.textContent = bioTextarea.value.trim();
+          changeBio(bioText.textContent.trim());
           bioButton.textContent = 'Change bio';
         }
         bioTextarea.classList.toggle('is-hidden');
@@ -86,11 +126,40 @@
     };
     if (emailButton && emailInput) {
       emailInput.addEventListener('input', () => {
-        emailButton.disabled = false
+        if (emailInput.value.trim() === emailActual) {
+          emailButton.disabled = true;
+        } else {
+          emailButton.disabled = false;
+        }
       });
       emailButton.addEventListener('click', () => {
-        changeEmail(emailInput.value);
+        changeEmail(emailInput.value.trim());
+        emailActual = emailInput.value.trim();
         emailButton.disabled = true;
+      })
+    }
+    if (passwordButton && passwordOldInput && passwordNewInput){
+      passwordOldInput.addEventListener('input', () => {
+        if (passwordOldInput.value.trim().length > 0 && passwordNewInput.value.trim().length > 0) {
+          passwordButton.disabled = false;
+        } else {
+          passwordButton.disabled = true;
+        }
+      });
+      passwordNewInput.addEventListener('input', () => {
+        if (passwordOldInput.value.trim().length > 0 && passwordNewInput.value.trim().length > 0) {
+          passwordButton.disabled = false;
+        } else {
+          passwordButton.disabled = true;
+        }
+      });
+      passwordButton.addEventListener('click', () => {
+        if (passwordOldInput.value.trim().length > 0 && passwordNewInput.value.trim().length > 0) {
+          changePassword(passwordOldInput.value, passwordNewInput.value);
+          passwordOldInput.value = '';
+          passwordNewInput.value = '';
+          passwordButton.disabled = true;
+        }
       })
     }
   });

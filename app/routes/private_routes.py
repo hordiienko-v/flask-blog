@@ -34,3 +34,18 @@ def change_email():
     current_user.save_to_db()
 
     return {"message": "OK"}
+
+@login_required
+@app.route("/change_password", methods=["POST"])
+def change_password():
+    data = request.get_json()
+    print('check: ', check_password_hash(current_user.password, data["old"]))
+    print('old: ', data["old"])
+    print('new: ', data["new"])
+    if check_password_hash(current_user.password, data["old"]):
+        if data["old"] == data["new"]:
+            return {"message": "New password cannot be the same"}
+        current_user.password = generate_password_hash(data["new"], method="sha256")
+        current_user.save_to_db()
+        return {"message": "OK"}
+    return {"message": "Incorrect password"}
