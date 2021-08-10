@@ -22,9 +22,12 @@
       <div class="card" style="padding: 30px">
         <div class="field">
           <h1 class="label">email</h1>
-          <div class="level">
+          <div class="level field">
             <input class="input" type="email" id="email-input" value="{{current_user.email}}">
             <button class="button is-primary" type="button" id="email-button" disabled>Change</button>
+          </div>
+          <div class="tags is-centered is-marginless is-hidden" id="email-tag-div">
+            <span class="tag is-light" id='email-tag'></span>
           </div>
         </div>
         <div class="field">
@@ -61,7 +64,9 @@
       responce.json().then(data => {
         const tag = document.getElementById("password-tag");
         const div = document.getElementById("password-tag-div");
+        console.log(data.message);
         if (data.message === "OK") {
+          tag.classList.remove('is-danger');
           tag.classList.add('is-success');
           tag.textContent = 'Password changed';
         } else {
@@ -94,6 +99,22 @@
       headers: {
       "Content-Type": "application/json"
       }
+    })
+    .then(responce => {
+      responce.json().then(data => {
+        const tag = document.getElementById("email-tag");
+        const div = document.getElementById("email-tag-div");
+        console.log(data.message);
+        if (data.message === "OK") {
+          tag.classList.remove('is-danger');
+          tag.classList.add('is-success');
+          tag.textContent = 'Email changed';
+        } else {
+          tag.classList.add('is-danger');
+          tag.textContent = data.message;
+        }
+        div.classList.remove('is-hidden');
+      })
     })
     .catch(function(error) {
       console.log("Fetch error: ${error}");

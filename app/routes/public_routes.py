@@ -71,7 +71,7 @@ def posts(user_id):
     user = User.find_by_id(user_id)
     if user:
         posts = user.posts.all()
-        return render_template("posts.html", username=user.username, posts=posts)
+        return render_template("posts.html", username=user.username, user_id=user.id, posts=posts)
     return render_template("basic_templates/errors/404.html"), 404
 
 @app.route("/post/<int:post_id>")

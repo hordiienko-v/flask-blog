@@ -1,14 +1,29 @@
-{% macro create_post_preview(title="", username="", post_id="", timestamp="") -%}
-  <a class="card hero block" href="/post/{{post_id}}"
-    onmouseover="this.style.opacity='0.7';" onmouseout="this.style.opacity='1';">
-    <div class="hero-body level" style="padding: 30px">
-      <div class="container">
-        <h1 class="title is-3 level-left">{{title}}</h1>
-        <h1 class="subtitle level-left">by {{username}}</h1>
+{% macro create_post_preview(title="", username="", post_id="", timestamp="", deleteButton="") -%}
+  <div class="block" id="post-{{post_id}}">
+    <div class="post card columns is-mobile">
+      <div class="column is-paddingless">
+        <a href="/post/{{post_id}}" onmouseover="this.style.opacity='0.7';"
+          onmouseout="this.style.opacity='1';" class="hero">
+          <div class="hero-body level">
+            <div class="container">
+              <h1 class="title is-3 level-left">{{title}}</h1>
+              <h1 class="subtitle level-left">by {{username}}</h1>
+            </div>
+            <div class="container level-right">
+              <h1 class="subtitle level-right">{{timestamp | format_date}}</h1>
+            </div>
+          </div>
+        </a>
       </div>
-      <div class="container level-right">
-        <h1 class="subtitle level-right">{{timestamp | format_date}}</h1>
-      </div>
+      {% if deleteButton %}
+        <div class="is-divider-vertical" style="width:1px; margin:15px 0;background:rgba(10,10,10,.2);"></div>
+        <div class="column is-narrow hero">
+          <div class="hero-body is-paddingless is-flex" style="align-items: center">
+            <button class="delete" type="button" name="delete-button" style="margin:20px; padding:20px"
+              id="{{post_id}}"></button>
+          </div>
+        </div>
+      {% endif %}
     </div>
-  </a>
+  </div>
 {%- endmacro %}

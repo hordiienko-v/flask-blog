@@ -31,7 +31,7 @@
               <a class="navbar-item" href="/sign-in">Sign-in</a>
               {% endif %}
               {% if current_user.is_authenticated %}
-              <!-- <a class="navbar-item" href="/{{current_user.get_id()}}/posts">My posts</a> -->
+              <a class="navbar-item" href="/{{current_user.get_id()}}/posts">My posts</a>
               <a class="navbar-item" href="/profile">Profile</a>
               <a class="navbar-item" href="/logout">Logout</a>
               {% endif %}

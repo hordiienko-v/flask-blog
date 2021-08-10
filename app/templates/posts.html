@@ -10,8 +10,13 @@
   {% if posts | length > 0 %}
     <div class="section">
       {% for post in posts %}
-        {{ m.create_post_preview(title=post.title, username=username,
-          post_id=post.id, timestamp=post.timestamp)}}
+        {% if current_user.is_authenticated and current_user.id==user_id%}
+          {{ m.create_post_preview(title=post.title, username=username,
+            post_id=post.id, timestamp=post.timestamp, deleteButton="True")}}
+        {% else %}
+          {{ m.create_post_preview(title=post.title, username=username,
+            post_id=post.id, timestamp=post.timestamp)}}
+        {% endif %}
       {% endfor %}
     </div>
   {% else %}
@@ -19,4 +24,33 @@
       <h1 class="title is-3">No posts yet :(</h1>
     </div>
   {% endif %}
+{% endblock %}
+
+{% block script %}
+  <script>
+    function delete_post(post_id) {
+      fetch(window.origin+"/delete_post", {
+        method: "DELETE",
+        body: JSON.stringify({post_id: post_id}),
+        headers: {
+        "Content-Type": "application/json"
+        }
+      })
+      .catch(function(error){
+        console.log("Fetch error: ${error}");
+      })
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const deleteButtons = document.getElementsByName("delete-button");
+      deleteButtons.forEach(button => {
+        button.addEventListener("click", () => {
+          delete_post(button.id);
+          post = document.getElementById("post-"+button.id);
+          post.remove();
+        });
+      });
+
+    });
+  </script>
 {% endblock %}
