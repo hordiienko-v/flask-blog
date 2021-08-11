@@ -1,0 +1,192 @@
+{% extends "basic_templates/index.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% if not user %}
+{% set user = current_user %}
+{% endif %}
+
+{% block main %}
+  <div class="section">
+    <h1 class="title has-text-centered is-2">Profile</h1>
+  </div>
+  <div class="columns block">
+    <div class="column is-2">
+      <img class="image" src="{{url_for('static', filename='icons/user.svg')}}" alt=""><br>
+      <h1 class="title has-text-centered is-spaced">{{user.username}}</h1>
+      <p class="field subtitle is-5 has-text-centered"
+      id="bio-text">{{user.bio}}</p>
+      <textarea class="field textarea is-hidden" name="bio" rows="4"
+      maxlength="100" id="bio-textarea">{{user.bio}}</textarea>
+      <div class="block has-text-centered">
+        <button class="button is-primary text-not-changing" type="button" id="bio-button">Change bio</button>
+      </div>
+    </div>
+    <div class="column is-6 is-offset-1">
+      <div class="card" style="padding: 30px">
+        <div class="field">
+          <h1 class="label">email</h1>
+          <div class="level field">
+            <input class="input" type="email" id="email-input" value="{{user.email}}">
+            <button class="button is-primary" type="button" id="email-button" disabled>Change</button>
+          </div>
+          <div class="tags is-centered is-marginless is-hidden" id="email-tag-div">
+            <span class="tag is-light" id='email-tag'></span>
+          </div>
+        </div>
+        <div class="field">
+          <h1 class="label">password</h1>
+          <div class="level field">
+            <input class="input" type="password" id="password-old-input" placeholder="enter current password">
+            <input class="input" type="password" id="password-new-input" placeholder="enter new password">
+            <button class="button is-primary" type="button" id="password-button" disabled>Change</button>
+          </div>
+          <div class="tags is-centered is-marginless is-hidden" id="password-tag-div">
+            <span class="tag is-light" id='password-tag'></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+
+
+
+{% block script %}
+<script>
+  function changePassword(old_p, new_p) {
+    var res = fetch(window.origin+"/change_password", {
+      method: "POST",
+      body: JSON.stringify({old: old_p, new: new_p}),
+      headers: {
+      "Content-Type": "application/json"
+      }
+    })
+    .then(responce => {
+      responce.json().then(data => {
+        const tag = document.getElementById("password-tag");
+        const div = document.getElementById("password-tag-div");
+        console.log(data.message);
+        if (data.message === "OK") {
+          tag.classList.remove('is-danger');
+          tag.classList.add('is-success');
+          tag.textContent = 'Password changed';
+        } else {
+          tag.classList.add('is-danger');
+          tag.textContent = data.message;
+        }
+        div.classList.remove('is-hidden');
+      })
+    })
+    .catch(function(error) {
+      console.log("Fetch error: ${error}");
+    });
+  }
+  function changeBio(bio) {
+    fetch(window.origin+"/change_bio", {
+      method: "POST",
+      body: JSON.stringify({bio: bio}),
+      headers: {
+      "Content-Type": "application/json"
+      }
+    })
+    .catch(function(error) {
+      console.log("Fetch error: ${error}");
+    });
+  }
+  function changeEmail(email) {
+    fetch(window.origin+"/change_email", {
+      method: "POST",
+      body: JSON.stringify({email: email}),
+      headers: {
+      "Content-Type": "application/json"
+      }
+    })
+    .then(responce => {
+      responce.json().then(data => {
+        const tag = document.getElementById("email-tag");
+        const div = document.getElementById("email-tag-div");
+        console.log(data.message);
+        if (data.message === "OK") {
+          tag.classList.remove('is-danger');
+          tag.classList.add('is-success');
+          tag.textContent = 'Email changed';
+        } else {
+          tag.classList.add('is-danger');
+          tag.textContent = data.message;
+        }
+        div.classList.remove('is-hidden');
+      })
+    })
+    .catch(function(error) {
+      console.log("Fetch error: ${error}");
+    });
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    const bioButton = document.getElementById('bio-button');
+    const bioTextarea = document.getElementById('bio-textarea');
+    const bioText = document.getElementById('bio-text');
+    const emailButton = document.getElementById('email-button');
+    const emailInput = document.getElementById('email-input');
+    var emailActual = emailInput.value.trim();
+    const passwordOldInput = document.getElementById('password-old-input');
+    const passwordNewInput = document.getElementById('password-new-input');
+    const passwordButton = document.getElementById('password-button');
+    if (bioButton && bioTextarea) {
+      bioButton.addEventListener('click', () => {
+        if (bioButton.classList.contains('text-not-changing')) {
+          bioButton.textContent = 'Save';
+        } else {
+          bioText.textContent = bioTextarea.value.trim();
+          changeBio(bioText.textContent.trim());
+          bioButton.textContent = 'Change bio';
+        }
+        bioTextarea.classList.toggle('is-hidden');
+        bioText.classList.toggle('is-hidden');
+        bioButton.classList.toggle('text-not-changing');
+        bioButton.classList.toggle('text-changing');
+      })
+    };
+    if (emailButton && emailInput) {
+      emailInput.addEventListener('input', () => {
+        if (emailInput.value.trim() === emailActual) {
+          emailButton.disabled = true;
+        } else {
+          emailButton.disabled = false;
+        }
+      });
+      emailButton.addEventListener('click', () => {
+        changeEmail(emailInput.value.trim());
+        emailActual = emailInput.value.trim();
+        emailButton.disabled = true;
+      })
+    }
+    if (passwordButton && passwordOldInput && passwordNewInput){
+      passwordOldInput.addEventListener('input', () => {
+        if (passwordOldInput.value.trim().length > 0 && passwordNewInput.value.trim().length > 0) {
+          passwordButton.disabled = false;
+        } else {
+          passwordButton.disabled = true;
+        }
+      });
+      passwordNewInput.addEventListener('input', () => {
+        if (passwordOldInput.value.trim().length > 0 && passwordNewInput.value.trim().length > 0) {
+          passwordButton.disabled = false;
+        } else {
+          passwordButton.disabled = true;
+        }
+      });
+      passwordButton.addEventListener('click', () => {
+        if (passwordOldInput.value.trim().length > 0 && passwordNewInput.value.trim().length > 0) {
+          changePassword(passwordOldInput.value, passwordNewInput.value);
+          passwordOldInput.value = '';
+          passwordNewInput.value = '';
+          passwordButton.disabled = true;
+        }
+      })
+    }
+  });
+</script>
+{% endblock %}

@@ -1,6 +1,9 @@
 {% extends "basic_templates/index.html" %}
+{% import "macros/macros.html" as m %}
 
 {% block title %}Profile{% endblock %}
+
+{% set posts_count = user.posts.count() %}
 
 {% block main %}
   <div class="section">
@@ -12,36 +15,26 @@
       <h1 class="title has-text-centered is-spaced">{{user.username}}</h1>
       <p class="field subtitle is-5 has-text-centered"
       id="bio-text">{{user.bio}}</p>
-      <textarea class="field textarea is-hidden" name="bio" rows="4"
-      maxlength="100" id="bio-textarea">{{user.bio}}</textarea>
-      <div class="block has-text-centered">
-        <button class="button is-primary text-not-changing" type="button" id="bio-button">Change bio</button>
-      </div>
     </div>
-    <div class="column is-6 is-offset-1">
-      <div class="card" style="padding: 30px">
-        <div class="field">
-          <h1 class="label">email</h1>
-          <div class="level field">
-            <input class="input" type="email" id="email-input" value="{{current_user.email}}">
-            <button class="button is-primary" type="button" id="email-button" disabled>Change</button>
-          </div>
-          <div class="tags is-centered is-marginless is-hidden" id="email-tag-div">
-            <span class="tag is-light" id='email-tag'></span>
-          </div>
+    <div class="column is-6 is-offset-1" id="column-posts">
+      {% if posts_count > 5 %}
+        <div class="block" id="post-block">
+          {% for post in user.posts.limit(5) %}
+            {{m.create_post_preview(title=post.title, username=user.username,
+              post_id=post.id, timestamp=post.timestamp)}}
+          {% endfor %}
         </div>
-        <div class="field">
-          <h1 class="label">password</h1>
-          <div class="level field">
-            <input class="input" type="password" id="password-old-input" placeholder="enter current password">
-            <input class="input" type="password" id="password-new-input" placeholder="enter new password">
-            <button class="button is-primary" type="button" id="password-button" disabled>Change</button>
-          </div>
-          <div class="tags is-centered is-marginless is-hidden" id="password-tag-div">
-            <span class="tag is-light" id='password-tag'></span>
-          </div>
+        <div class="block has-text-centered" id="load-button-block">
+          <button class="button is-primary" type="button" id="load-button">Load more</button>
         </div>
-      </div>
+      {% else %}
+        <div class="block" id="post-block">
+          {% for post in user.posts.all() %}
+            {{m.create_post_preview(title=post.title, username=user.username,
+              post_id=post.id, timestamp=post.timestamp)}}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
   </div>
 {% endblock %}
@@ -52,135 +45,71 @@
 
 {% block script %}
 <script>
-  function changePassword(old_p, new_p) {
-    var res = fetch(window.origin+"/change_password", {
-      method: "POST",
-      body: JSON.stringify({old: old_p, new: new_p}),
-      headers: {
-      "Content-Type": "application/json"
-      }
-    })
-    .then(responce => {
-      responce.json().then(data => {
-        const tag = document.getElementById("password-tag");
-        const div = document.getElementById("password-tag-div");
-        console.log(data.message);
-        if (data.message === "OK") {
-          tag.classList.remove('is-danger');
-          tag.classList.add('is-success');
-          tag.textContent = 'Password changed';
-        } else {
-          tag.classList.add('is-danger');
-          tag.textContent = data.message;
-        }
-        div.classList.remove('is-hidden');
-      })
-    })
-    .catch(function(error) {
-      console.log("Fetch error: ${error}");
-    });
+  const loadButtonBlock = document.getElementById("load-button-block");
+  const loadButton = document.getElementById("load-button");
+  var posts_count = Number({{posts_count}});
+  var posts_loaded = 5;
+  var postBlock = document.getElementById("post-block");
+  var firstPost = document.querySelectorAll("div.post")[0];
+
+  function buildPostPreview(post_id, title, username, timestamp) {
+    var html = `<div class="post" id="post-${post_id}">
+                  <div class="post card columns is-mobile" style="margin:0 0 10px 0" >
+                    <div class="column is-paddingless">
+                      <a href="/post/${post_id}" onmouseover="this.style.opacity='0.7';"
+                        onmouseout="this.style.opacity='1';" class="hero">
+                        <div class="hero-body level" style="padding:30px">
+                          <div class="container">
+                            <h1 class="title is-3 level-left" name="title">${title}</h1>
+                            <h1 class="subtitle level-left" name="by">by ${username}</h1>
+                          </div>
+                          <div class="container level-right">
+                            <h1 class="subtitle level-right">${timestamp}</h1>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>`;
+    return html;
   }
-  function changeBio(bio) {
-    fetch(window.origin+"/change_bio", {
-      method: "POST",
-      body: JSON.stringify({bio: bio}),
+
+  function loadPosts() {
+    fetch(window.origin+"/get_posts?"+ new URLSearchParams({
+      user_id: {{user.id}},
+      offset: posts_loaded,
+      count: 5
+    }),
+    {
+      method: "GET",
       headers: {
       "Content-Type": "application/json"
       }
     })
-    .catch(function(error) {
-      console.log("Fetch error: ${error}");
-    });
-  }
-  function changeEmail(email) {
-    fetch(window.origin+"/change_email", {
-      method: "POST",
-      body: JSON.stringify({email: email}),
-      headers: {
-      "Content-Type": "application/json"
-      }
-    })
-    .then(responce => {
-      responce.json().then(data => {
-        const tag = document.getElementById("email-tag");
-        const div = document.getElementById("email-tag-div");
-        console.log(data.message);
-        if (data.message === "OK") {
-          tag.classList.remove('is-danger');
-          tag.classList.add('is-success');
-          tag.textContent = 'Email changed';
-        } else {
-          tag.classList.add('is-danger');
-          tag.textContent = data.message;
+    .then(function(responce) {
+      responce.json().then((data) => {
+        posts = data.posts;
+        posts_loaded += posts.length;
+        posts.forEach((post) => {
+          var newPost = buildPostPreview(post.id, post.title,
+            post.author_username, post.timestamp);
+          postBlock.insertAdjacentHTML("beforeend", newPost);
+        });
+
+        if (posts_count === posts_loaded) {
+          loadButton.remove();
         }
-        div.classList.remove('is-hidden');
-      })
+
+      });
     })
     .catch(function(error) {
-      console.log("Fetch error: ${error}");
+      console.log("Fetch error: "+ error);
     });
   }
   document.addEventListener('DOMContentLoaded', () => {
-    const bioButton = document.getElementById('bio-button');
-    const bioTextarea = document.getElementById('bio-textarea');
-    const bioText = document.getElementById('bio-text');
-    const emailButton = document.getElementById('email-button');
-    const emailInput = document.getElementById('email-input');
-    var emailActual = emailInput.value.trim();
-    const passwordOldInput = document.getElementById('password-old-input');
-    const passwordNewInput = document.getElementById('password-new-input');
-    const passwordButton = document.getElementById('password-button');
-    if (bioButton && bioTextarea) {
-      bioButton.addEventListener('click', () => {
-        if (bioButton.classList.contains('text-not-changing')) {
-          bioButton.textContent = 'Save';
-        } else {
-          bioText.textContent = bioTextarea.value.trim();
-          changeBio(bioText.textContent.trim());
-          bioButton.textContent = 'Change bio';
-        }
-        bioTextarea.classList.toggle('is-hidden');
-        bioText.classList.toggle('is-hidden');
-        bioButton.classList.toggle('text-not-changing');
-        bioButton.classList.toggle('text-changing');
-      })
-    };
-    if (emailButton && emailInput) {
-      emailInput.addEventListener('input', () => {
-        if (emailInput.value.trim() === emailActual) {
-          emailButton.disabled = true;
-        } else {
-          emailButton.disabled = false;
-        }
-      });
-      emailButton.addEventListener('click', () => {
-        changeEmail(emailInput.value.trim());
-        emailActual = emailInput.value.trim();
-        emailButton.disabled = true;
-      })
-    }
-    if (passwordButton && passwordOldInput && passwordNewInput){
-      passwordOldInput.addEventListener('input', () => {
-        if (passwordOldInput.value.trim().length > 0 && passwordNewInput.value.trim().length > 0) {
-          passwordButton.disabled = false;
-        } else {
-          passwordButton.disabled = true;
-        }
-      });
-      passwordNewInput.addEventListener('input', () => {
-        if (passwordOldInput.value.trim().length > 0 && passwordNewInput.value.trim().length > 0) {
-          passwordButton.disabled = false;
-        } else {
-          passwordButton.disabled = true;
-        }
-      });
-      passwordButton.addEventListener('click', () => {
-        if (passwordOldInput.value.trim().length > 0 && passwordNewInput.value.trim().length > 0) {
-          changePassword(passwordOldInput.value, passwordNewInput.value);
-          passwordOldInput.value = '';
-          passwordNewInput.value = '';
-          passwordButton.disabled = true;
-        }
+    if (loadButton) {
+      loadButton.addEventListener("click", () => {
+        loadPosts();
       })
     }
   });

@@ -15,12 +15,12 @@ def logout():
 @login_required
 @app.route("/profile")
 def profile():
-    return render_template("profile.html", user=current_user)
+    return render_template("profile_private.html")
 
 @login_required
 @app.route("/change_bio", methods=["POST"])
 def change_bio():
-    if request.get_json()["bio"].length <= 100:
+    if len(request.get_json()["bio"]) <= 100:
         new_bio = request.get_json()["bio"]
         current_user.bio = new_bio
         current_user.save_to_db()

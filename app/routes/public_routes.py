@@ -12,7 +12,7 @@ def page_not_found(e):
 
 @app.route("/")
 def home():
-    posts = Post.get_last_twenty()
+    posts = Post.get_last_five()
     return render_template("home.html", posts=posts)
 
 @app.route("/sign-up", methods=["GET", "POST"])
@@ -80,3 +80,16 @@ def post(post_id):
     if post:
         return render_template("post.html", post=post)
     return render_template("basic_templates/errors/404.html"), 404
+
+@app.route("/user/<int:user_id>")
+def user(user_id):
+    user = User.find_by_id(user_id)
+    if user:
+        return render_template("profile.html", user=user)
+    return render_template("basic_templates/errors/404.html"), 404
+
+@app.route("/get_posts")
+def get_posts():
+    data = {i[0]:int(i[1]) for i in request.args.items()}
+    posts = Post.query.filter_by(author_id=data["user_id"]).offset(data["offset"]).limit(data["count"]).all()
+    return {"posts": [post.json() for post in posts]}

@@ -18,9 +18,20 @@ class Post(db.Model):
         self.timestamp = timestamp
         self.author_id = author_id
 
+    def json(self):
+        res = {
+            "id": self.id,
+            "title": self.title,
+            "body": self.body,
+            "timestamp": self.timestamp.strftime("%H:%M %d.%m.%y"),
+            "author_id": self.author_id,
+            "author_username": self.author.username
+        }
+        return res
+
     @classmethod
-    def get_last_twenty(cls):
-        return list(cls.query.order_by(desc(Post.timestamp)).limit(20).all())
+    def get_last_five(cls):
+        return list(cls.query.order_by(desc(Post.timestamp)).limit(5).all())
 
     @classmethod
     def find_by_id(cls, _id):
