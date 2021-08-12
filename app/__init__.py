@@ -2,9 +2,9 @@ from flask import Flask
 import os
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE", "sqlite:///data.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = os.getenv("blog-secret", "secret")
+app.secret_key = os.environ.get("blog-secret", "secret")
 
 from app.routes import public_routes, private_routes
 
