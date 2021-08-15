@@ -93,3 +93,20 @@ def get_posts():
     data = {i[0]:int(i[1]) for i in request.args.items()}
     posts = Post.query.filter_by(author_id=data["user_id"]).offset(data["offset"]).limit(data["count"]).all()
     return {"posts": [post.json() for post in posts]}
+
+@app.route("/forgot_pass", methods=["GET", "POST"])
+def forgot_pass():
+    if request.method == "POST":
+        data = request.form
+        user = User.query.filter_by(username=data["username"], email=data["email"]).first();
+        if user:
+            if data["new_pass"] == data["new_pass_rep"]:
+                user.password = generate_password_hash(data['new_pass'])
+                user.save_to_db()
+                return render_template("forgot_pass.html", success="Password has been changed")
+            else:
+                return render_template("forgot_pass.html", error="Password fields must be equal")
+        else:
+            return render_template("forgot_pass.html", error="User with these credentials does not exists")
+    else:
+        return render_template("forgot_pass.html")

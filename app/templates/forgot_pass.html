@@ -1,0 +1,36 @@
+{% extends "basic_templates/no-scroll.html" %}
+
+{% block title %}Forgot password{% endblock %}
+
+{% block main %}
+  <div class="hero-body">
+    <div class="card column is-4 is-offset-4" style="padding : 30px">
+      <h1 class="title has-text-centered">Forgot password?</h1>
+      <form class="forgot_pass" action="/forgot_pass" method="post">
+        <div class="field">
+          <input class="input" type="text" id="username" name="username" placeholder="Username">
+        </div>
+        <div class="field">
+          <input class="input" type="email" id="email" name="email" placeholder="Email">
+        </div>
+        <div class="field">
+          <input class="input" type="password" id="password" name="new_pass" placeholder="New password">
+        </div>
+        <div class="field">
+          <input class="input" type="password" id="password" name="new_pass_rep" placeholder="Repeat new password">
+        </div>
+        {% if error %}
+        <div class="tags is-centered is-marginless">
+          <span class="tag is-danger is-light">{{error}}</span>
+        </div>
+        {% endif %}
+        {% if success %}
+        <div class="tags is-centered is-marginless">
+          <span class="tag is-success is-light">{{success}}</span>
+        </div>
+        {% endif %}
+        <button class="button is-primary is-fullwidth" type="submit" id="button">Submit</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
